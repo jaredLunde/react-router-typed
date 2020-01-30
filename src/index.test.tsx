@@ -25,7 +25,7 @@ type FooRouteMap = {
 
 describe('createTypedRouter()', () => {
   it('should have the same exports as react-router-dom', () => {
-    expect(Object.keys(createTypedRouter({})).sort()).toEqual(
+    expect([...Object.keys(createTypedRouter({})), 'default'].sort()).toEqual(
       [...Object.keys(ReactRouterDom), 'createAsyncRoute'].sort()
     )
   })

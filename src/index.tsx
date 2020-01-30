@@ -18,10 +18,7 @@ import {
   useParams as useParams_,
   useRouteMatch as useRouteMatch_,
   withRouter,
-  default as Default,
   // Types
-  LinkProps as LinkProps_,
-  NavLinkProps as NavLinkProps_,
   RouteProps as RouteProps_,
   RedirectProps as RedirectProps_,
   match,
@@ -30,6 +27,8 @@ import {__RouterContext} from 'react-router'
 import {
   createAsyncRoute,
   AsyncRouteOptions,
+  LinkProps as LinkProps_,
+  NavLinkProps as NavLinkProps_,
   withPreload,
 } from 'create-async-route'
 import {AsyncComponentGetter} from 'create-async-component'
@@ -73,12 +72,12 @@ export type ToParams<
 export type LinkProps<
   RM extends RouteMap,
   To extends Extract<keyof RM, string>
-> = LinkProps_<any> & ToParams<RM, To>
+> = LinkProps_ & ToParams<RM, To>
 
 export type NavLinkProps<
   RM extends RouteMap,
   To extends Extract<keyof RM, string>
-> = NavLinkProps_<any> & ToParams<RM, To>
+> = NavLinkProps_ & ToParams<RM, To>
 
 export type RedirectProps<
   RM extends RouteMap,
@@ -191,7 +190,6 @@ const createTypedRouter = <RM extends RouteMap = RouteMap>(
     generatePath,
     withRouter,
     __RouterContext,
-    default: Default,
     createAsyncRoute: <P,>(
       component: AsyncComponentGetter<P>,
       options: AsyncRouteOptions<P> = {}
