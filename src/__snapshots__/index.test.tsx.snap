@@ -1,0 +1,53 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<Link> should render proper path w/ params: <div/> 1`] = `
+<DocumentFragment>
+  <a
+    href="/bar/boz"
+  />
+</DocumentFragment>
+`;
+
+exports[`<Link> should render proper path: <div/> 1`] = `
+<DocumentFragment>
+  <a
+    href="/foo"
+  />
+</DocumentFragment>
+`;
+
+exports[`<NavLink> should render proper path w/ params: <div/> 1`] = `
+<DocumentFragment>
+  <a
+    href="/foo/boz"
+  />
+</DocumentFragment>
+`;
+
+exports[`<NavLink> should render proper path: <div/> 1`] = `
+<DocumentFragment>
+  <a
+    href="/bar"
+  />
+</DocumentFragment>
+`;
+
+exports[`<Route> should create: <div/> 1`] = `
+<DocumentFragment>
+  <div />
+</DocumentFragment>
+`;
+
+exports[`<Route> should create: empty 1`] = `<DocumentFragment />`;
+
+exports[`createAsyncRoute() should load regular components w/o loading state 1`] = `
+<DocumentFragment>
+  <div />
+</DocumentFragment>
+`;
+
+exports[`createAsyncRoute() should load regular components w/o loading state or options 1`] = `
+<DocumentFragment>
+  <div />
+</DocumentFragment>
+`;
