@@ -1,18 +1,20 @@
 {
-  "name": "react-router-types",
+  "name": "react-router-typed",
   "version": "1.0.0",
-  "homepage": "https://github.com/jaredLunde/react-router-types#readme",
-  "repository": "github:jaredLunde/react-router-types",
-  "bugs": "https://github.com/jaredLunde/react-router-types/issues",
+  "homepage": "https://github.com/jaredLunde/react-router-typed#readme",
+  "repository": "github:jaredLunde/react-router-typed",
+  "bugs": "https://github.com/jaredLunde/react-router-typed/issues",
   "license": "MIT",
-  "description": "",
+  "description": "An abstraction for react-router-dom that adds stronger typing and better autocomplete",
   "keywords": [
     "react",
-    "react component",
-    "react router types"
+    "react router",
+    "react router types",
+    "react router typed"
   ],
   "main": "dist/cjs/index.js",
   "module": "dist/es/index.js",
+  "types": "dist/cjs/index.d.ts",
   "files": [
     "/dist"
   ],
@@ -73,7 +75,11 @@
     "ts-jest": "latest",
     "typescript": "latest"
   },
-  "dependencies": {},
+  "dependencies": {
+    "@types/react-router": "*",
+    "@types/react-router-dom": "*",
+    "react-router-dom": "^5.1.2"
+  },
   "peerDependencies": {
     "prop-types": ">=15.6",
     "react": ">=16.8",
