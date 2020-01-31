@@ -38,16 +38,21 @@ export type RouteParams = {
   [paramName: string]: string | number | boolean | undefined
 }
 
+export type LocationState = {
+  [key: string]: string | boolean | number | null | LocationState
+}
+
 export interface RouteMap {
   [routeKey: string]: {
     path: string
     params?: RouteParams | null
+    state?: LocationState
   }
 }
 
 export interface RouteProps<RM extends RouteMap> extends RouteProps_ {
-  to?: Extract<keyof RM, string> | Extract<keyof RM, string>[]
-  path?: Extract<keyof RM, string> | Extract<keyof RM, string>[]
+  to?: Extract<keyof RM, string> | Extract<keyof RM, string>[] | '*'
+  path?: Extract<keyof RM, string> | Extract<keyof RM, string>[] | '*'
 }
 
 export type ToParams<
@@ -56,6 +61,7 @@ export type ToParams<
 > = {
   to: To
   params?: RM[To]['params']
+  state?: LocationState
 }
 
 export type LinkProps<
@@ -103,15 +109,36 @@ export type Routes<RM extends RouteMap = RouteMap> = {
 const createTypedRouter = <RM extends RouteMap = RouteMap>(
   routeMap: Routes<RM>
 ) => {
+  const normalizeTo = <To extends Extract<keyof RM, string>>(
+    to: To,
+    params: InParams<RouteMap, To>,
+    state: LocationState
+  ) => {
+    // super naive url parsing for the case when a user wants to
+    // provide state to `to` props
+    const href = generatePath(routeMap[to], params as RouteParams)
+    const [initialPathname, ...hash] = href.split('#')
+    const [pathname, ...search] = initialPathname.split('?')
+    return {
+      pathname,
+      search: `?${search.join('?')}`,
+      hash: `#${hash.join('#')}`,
+      state,
+    }
+  }
+
   const toProps = <RouteKey extends Extract<keyof RM, string>, Props>(
     props: Record<string, any>,
     to: RouteKey,
-    params?: RM[RouteKey]['params']
+    params?: RM[RouteKey]['params'],
+    state?: LocationState
   ) => ({
     ...props,
     to:
       params === null
         ? routeMap[to]
+        : state
+        ? normalizeTo(to, params, state)
         : generatePath(routeMap[to], params as RouteParams),
   })
 
