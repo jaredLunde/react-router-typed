@@ -12,7 +12,6 @@ import {
   Prompt,
   Redirect as Redirect_,
   Route as Route_,
-  Switch,
   useHistory,
   useLocation,
   useParams as useParams_,
@@ -23,7 +22,7 @@ import {
   RedirectProps as RedirectProps_,
   match,
 } from 'react-router-dom'
-import {__RouterContext} from 'react-router'
+import {__RouterContext, SwitchProps} from 'react-router'
 import {
   createAsyncRoute as createAsyncRoute_,
   AsyncRouteOptions,
@@ -133,6 +132,33 @@ const createTypedRouter = <RM extends RouteMap = RouteMap>(
     (props: RouteProps<RM>, ref: any) =>
       React.createElement(Route_, pathProps(props, ref))
   )
+
+  const Switch: React.FC<SwitchProps> = ({location, children}) => {
+    const contextLocation = useLocation()
+    const realLocation = location || contextLocation
+    const contextMatch = useRouteMatch_<any>()
+    let element: React.ReactElement | null = null
+    let computedMatch: match<any> | null = null
+
+    React.Children.forEach(children, child => {
+      if (computedMatch == null && React.isValidElement(child)) {
+        element = child
+        const path =
+          routeMap[child.props.path || child.props.from || child.props.to]
+
+        computedMatch = path
+          ? matchPath_(realLocation.pathname, {...child.props, path})
+          : contextMatch
+      }
+    })
+
+    return computedMatch && element
+      ? React.cloneElement(element, {
+          location: realLocation,
+          computedMatch: computedMatch,
+        })
+      : null
+  }
 
   function createAsyncRoute<P = RouteProps<RM>>(
     component: AsyncComponentGetter<any>,
