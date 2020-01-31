@@ -40,6 +40,12 @@ exports[`<Route> should create: <div/> 1`] = `
 
 exports[`<Route> should create: empty 1`] = `<DocumentFragment />`;
 
+exports[`createAsyncRoute() should display the correct route 1`] = `
+<DocumentFragment>
+  foo - foobar
+</DocumentFragment>
+`;
+
 exports[`createAsyncRoute() should load regular components w/o loading state 1`] = `
 <DocumentFragment>
   <div />

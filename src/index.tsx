@@ -134,9 +134,9 @@ const createTypedRouter = <RM extends RouteMap = RouteMap>(
       React.createElement(Route_, pathProps(props, ref))
   )
 
-  function createAsyncRoute<P>(
-    component: AsyncComponentGetter<P>,
-    options?: AsyncRouteOptions<P>
+  function createAsyncRoute<P = RouteProps<RM>>(
+    component: AsyncComponentGetter<any>,
+    options?: AsyncRouteOptions<any>
   ) {
     return createAsyncRoute_<P>(component, {...options, route: Route})
   }

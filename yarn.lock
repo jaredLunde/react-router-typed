@@ -2094,10 +2094,10 @@ create-async-component@^1.0.4:
   resolved "https://registry.yarnpkg.com/create-async-component/-/create-async-component-1.0.4.tgz#0f619a2f9a26590b5d271844885efba3f6daef47"
   integrity sha512-dvHoWvSWorx8e43hnk2L0sHEqj0IYy0+k3v4PiorVxSq9JoiTA9wcFHTZ67+T8O7CJT8Fr6hRc2w2SCWzppdAQ==
 
-create-async-route@^1.1.0:
-  version "1.1.0"
-  resolved "https://registry.yarnpkg.com/create-async-route/-/create-async-route-1.1.0.tgz#2f79b7c947fbba1f0982301dfd4c5c9fd0ee5064"
-  integrity sha512-sGph04q+DqnF9RonyEeOuj/nbxunkCLNeg9gZC6n3MxEQpcWnfsLsNAYcxQhRanlIZiMSVLIdi6yeoAwT/dB4A==
+create-async-route@^1.1.3:
+  version "1.1.3"
+  resolved "https://registry.yarnpkg.com/create-async-route/-/create-async-route-1.1.3.tgz#f25158a3b776a3f8300d5dbb8d0216e5af945a2f"
+  integrity sha512-njlP4869xmQRdVaqJnljYwBAak6DlUJTBbtOp/Jv+/ln9FLg8gVMbU5IPDVRkb8VbgnvMty52PnN8Plyw6vlaQ==
   dependencies:
     create-async-component "^1.0.4"
 

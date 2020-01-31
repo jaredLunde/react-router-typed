@@ -239,9 +239,11 @@ describe('useRouteMatch()', () => {
 })
 
 describe('createAsyncRoute()', () => {
-  const {StaticRouter, createAsyncRoute} = createTypedRouter<{
+  const {StaticRouter, Switch, Route, createAsyncRoute} = createTypedRouter<{
     foo: {path: '/foo'}
-  }>({foo: '/foo'})
+    bar: {path: '/bar'}
+    home: {path: '/'}
+  }>({foo: '/foo', bar: '/bar', home: '/'})
   const ComponentModule = {
     default: ({children}) => <div children={children} />,
   }
@@ -253,8 +255,8 @@ describe('createAsyncRoute()', () => {
 
     let result
     act(() => {
-      result = render(<HomeRoute path="home" />, {
-        wrapper: props => <StaticRouter location="/" {...props} />,
+      result = render(<HomeRoute to="foo" />, {
+        wrapper: props => <StaticRouter location="/foo" {...props} />,
       })
     })
 
@@ -266,9 +268,36 @@ describe('createAsyncRoute()', () => {
 
     let result
     act(() => {
-      result = render(<HomeRoute path="home" />, {
-        wrapper: props => <StaticRouter location="/" {...props} />,
+      result = render(<HomeRoute path="foo" />, {
+        wrapper: props => <StaticRouter location="/foo" {...props} />,
       })
+    })
+
+    expect(result.asFragment()).toMatchSnapshot()
+  })
+
+  it('should display the correct route', () => {
+    const HomeRoute = createAsyncRoute(() => ComponentModule)
+
+    let result
+    act(() => {
+      result = render(
+        <>
+          <HomeRoute path="foo" children="foo" />
+          <HomeRoute path="bar" children="bar" />
+          <HomeRoute path={['foo', 'bar']} children=" - foobar" />
+          <HomeRoute path="home" exact children="home" />
+        </>,
+        {
+          wrapper: props => (
+            <StaticRouter
+              location="/foo"
+              {...props}
+              children={<Switch>{props.children}</Switch>}
+            />
+          ),
+        }
+      )
     })
 
     expect(result.asFragment()).toMatchSnapshot()
