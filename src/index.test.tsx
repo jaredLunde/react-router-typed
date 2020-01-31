@@ -124,7 +124,7 @@ describe('<NavLink>', () => {
   })
 
   it('should render proper path w/ params', () => {
-    const result = render(<NavLink to="foo" params={{bar: 'baz'}} />, {wrapper})
+    const result = render(<NavLink to="foo" params={{bar: 'boz'}} />, {wrapper})
     expect(result.asFragment()).toMatchSnapshot('<div/>')
   })
 })
