@@ -119,7 +119,7 @@ describe('<NavLink>', () => {
   )
 
   it('should render proper path', () => {
-    const result = render(<NavLink to="bar" />, {wrapper})
+    const result = render(<NavLink to="bar" params={{bar: 'bar'}} />, {wrapper})
     expect(result.asFragment()).toMatchSnapshot('<div/>')
   })
 

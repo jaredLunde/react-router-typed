@@ -53,15 +53,10 @@ export interface RouteProps<RM extends RouteMap> extends RouteProps_ {
 export type ToParams<
   RM extends RouteMap,
   To extends Extract<keyof RM, string>
-> = RM[To]['params'] extends null
-  ? {
-      to: To
-      params?: never
-    }
-  : {
-      to: To
-      params: RM[To]['params']
-    }
+> = {
+  to: To
+  params?: RM[To]['params']
+}
 
 export type LinkProps<
   RM extends RouteMap,
