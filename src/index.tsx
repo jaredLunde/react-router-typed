@@ -25,7 +25,7 @@ import {
 } from 'react-router-dom'
 import {__RouterContext} from 'react-router'
 import {
-  createAsyncRoute,
+  createAsyncRoute as createAsyncRoute_,
   AsyncRouteOptions,
   LinkProps as LinkProps_,
   NavLinkProps as NavLinkProps_,
@@ -115,9 +115,10 @@ const createTypedRouter = <RM extends RouteMap = RouteMap>(
         : generatePath(routeMap[to], params as RouteParams),
   })
 
-  const pathProps = (props: Record<string, any>) => {
+  const pathProps = (props: Record<string, any>, ref: any = void 0) => {
     const path = props.path || props.to
     return {
+      ref,
       ...props,
       path:
         path === void 0
@@ -128,8 +129,17 @@ const createTypedRouter = <RM extends RouteMap = RouteMap>(
     }
   }
 
-  const Route = (props: RouteProps<RM>) =>
-    React.createElement(Route_, pathProps(props))
+  const Route = forwardRef<any, RouteProps<RM>>(
+    (props: RouteProps<RM>, ref: any) =>
+      React.createElement(Route_, pathProps(props, ref))
+  )
+
+  function createAsyncRoute<P>(
+    component: AsyncComponentGetter<P>,
+    options?: AsyncRouteOptions<P>
+  ) {
+    return createAsyncRoute_<P>(component, {...options, route: Route})
+  }
 
   return {
     Router,
@@ -190,11 +200,7 @@ const createTypedRouter = <RM extends RouteMap = RouteMap>(
     generatePath,
     withRouter,
     __RouterContext,
-    createAsyncRoute: <P,>(
-      component: AsyncComponentGetter<P>,
-      options: AsyncRouteOptions<P> = {}
-    ): ReturnType<typeof createAsyncRoute> =>
-      createAsyncRoute(component, {...options, route: Route}),
+    createAsyncRoute,
   }
 }
 

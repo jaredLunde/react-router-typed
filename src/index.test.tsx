@@ -253,7 +253,7 @@ describe('createAsyncRoute()', () => {
 
     let result
     act(() => {
-      result = render(<HomeRoute path="/" />, {
+      result = render(<HomeRoute path="home" />, {
         wrapper: props => <StaticRouter location="/" {...props} />,
       })
     })
@@ -266,7 +266,7 @@ describe('createAsyncRoute()', () => {
 
     let result
     act(() => {
-      result = render(<HomeRoute path="/" />, {
+      result = render(<HomeRoute path="home" />, {
         wrapper: props => <StaticRouter location="/" {...props} />,
       })
     })
