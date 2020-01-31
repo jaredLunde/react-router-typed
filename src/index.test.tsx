@@ -239,7 +239,7 @@ describe('useRouteMatch()', () => {
 })
 
 describe('createAsyncRoute()', () => {
-  const {StaticRouter, Switch, Route, createAsyncRoute} = createTypedRouter<{
+  const {StaticRouter, Switch, createAsyncRoute} = createTypedRouter<{
     foo: {path: '/foo'}
     bar: {path: '/bar'}
     home: {path: '/'}
