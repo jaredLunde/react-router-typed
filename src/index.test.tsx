@@ -14,6 +14,7 @@ type FooRouteMap = {
   }
   bar: {
     path: '/bar'
+    params: null
   }
   baz: {
     path: '/foo/:bar?'
@@ -33,7 +34,9 @@ describe('createTypedRouter()', () => {
 
 describe('<Route>', () => {
   it('should create', () => {
-    const {StaticRouter, Route} = createTypedRouter<{foo: {path: '/foo'}}>({
+    const {StaticRouter, Route} = createTypedRouter<{
+      foo: {path: '/foo'; params: null}
+    }>({
       foo: '/foo',
     })
 
@@ -57,7 +60,7 @@ describe('<Route>', () => {
 
 describe('<Redirect>', () => {
   const {StaticRouter, Redirect} = createTypedRouter<{
-    foo: {path: '/foo'}
+    foo: {path: '/foo'; params: null}
   }>({
     foo: '/foo',
   })
@@ -240,9 +243,9 @@ describe('useRouteMatch()', () => {
 
 describe('createAsyncRoute()', () => {
   const {StaticRouter, Switch, createAsyncRoute} = createTypedRouter<{
-    foo: {path: '/foo'}
-    bar: {path: '/bar'}
-    home: {path: '/'}
+    foo: {path: '/foo'; params: null}
+    bar: {path: '/bar'; params: null}
+    home: {path: '/'; params: null}
   }>({foo: '/foo', bar: '/bar', home: '/'})
   const ComponentModule = {
     default: ({children}) => <div children={children} />,
