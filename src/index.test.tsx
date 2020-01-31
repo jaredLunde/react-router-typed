@@ -77,7 +77,7 @@ describe('<Redirect>', () => {
 
 describe('<Link>', () => {
   const {StaticRouter, Link} = createTypedRouter<{
-    foo: {path: '/foo'}
+    foo: {path: '/foo'; params: null}
     bar: {
       path: '/bar/:baz'
       params: {

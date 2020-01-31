@@ -41,7 +41,7 @@ export type RouteParams = {
 export interface RouteMap {
   [routeKey: string]: {
     path: string
-    params?: RouteParams | null
+    params: RouteParams | null
   }
 }
 
@@ -53,12 +53,7 @@ export interface RouteProps<RM extends RouteMap> extends RouteProps_ {
 export type ToParams<
   RM extends RouteMap,
   To extends Extract<keyof RM, string>
-> = undefined extends RM[To]['params']
-  ? {
-      to: To
-      params?: never
-    }
-  : null extends RM[To]['params']
+> = null extends RM[To]['params']
   ? {
       to: To
       params?: RM[To]['params']
