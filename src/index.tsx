@@ -51,7 +51,7 @@ export type LocationState = {
   [key: string]: string | boolean | number | null | LocationState
 }
 
-export interface RouteMap {
+export interface RouteTypes {
   [to: string]: {
     path: string
     params?: RouteParams | null
@@ -60,49 +60,49 @@ export interface RouteMap {
 }
 
 export type ToParams<
-  RM extends RouteMap,
-  To extends Extract<keyof RM, string>
+  T extends RouteTypes,
+  To extends Extract<keyof T, string>
 > = {
   to: To
-  params?: RM[To]['params']
-  state?: RM[To]['state']
+  params?: T[To]['params']
+  state?: T[To]['state']
 }
 
 export type LinkProps<
-  RM extends RouteMap,
-  To extends Extract<keyof RM, string>
+  T extends RouteTypes,
+  To extends Extract<keyof T, string>
 > = LinkProps_ &
-  ToParams<RM, To> & {
+  ToParams<T, To> & {
     ref?: never
     innerRef?: React.Ref<HTMLAnchorElement>
   }
 
 export type NavLinkProps<
-  RM extends RouteMap,
-  To extends Extract<keyof RM, string>
+  T extends RouteTypes,
+  To extends Extract<keyof T, string>
 > = NavLinkProps_ &
-  ToParams<RM, To> & {
+  ToParams<T, To> & {
     ref?: never
     innerRef?: React.Ref<HTMLAnchorElement>
   }
 
 export type RedirectProps<
-  RM extends RouteMap,
-  To extends Extract<keyof RM, string>
+  T extends RouteTypes,
+  To extends Extract<keyof T, string>
 > = Omit<RedirectProps_, 'to'> &
-  ToParams<RM, To> & {
+  ToParams<T, To> & {
     innerRef?: React.Ref<React.ReactElement<RedirectProps_>>
   }
 
 export type OutParams<
-  RM extends RouteMap,
-  To extends Extract<keyof RM, string>
+  T extends RouteTypes,
+  To extends Extract<keyof T, string>
 > = {
-  [K in keyof Extract<RM[To]['params'], Record<string, string>>]?: string
+  [K in keyof Extract<T[To]['params'], Record<string, string>>]?: string
 }
 
-export type Routes<RM extends RouteMap = RouteMap> = {
-  [To in keyof RM]: RM[To]['path']
+export type Routes<T extends RouteTypes = RouteTypes> = {
+  [To in keyof T]: T[To]['path']
 }
 
 export interface StaticRouterProps<Context> extends StaticRouterProps_ {
@@ -111,8 +111,8 @@ export interface StaticRouterProps<Context> extends StaticRouterProps_ {
 }
 
 export interface RouteProps<
-  RM extends RouteMap,
-  To extends Extract<keyof RM, string>,
+  T extends RouteTypes,
+  To extends Extract<keyof T, string>,
   Context
 > extends RouteProps_ {
   to?: To | To[] | '*'
@@ -120,9 +120,9 @@ export interface RouteProps<
   component?:
     | React.ComponentType<
         RouteComponentProps<
-          OutParams<RM, To>,
+          OutParams<T, To>,
           Context & StaticContext,
-          RM[To]['state']
+          T[To]['state']
         >
       >
     | React.ComponentType<any>
@@ -130,32 +130,32 @@ export interface RouteProps<
   innerRef?: React.Ref<React.ReactElement<RouteProps_>>
   render?: (
     props: RouteComponentProps<
-      OutParams<RM, To>,
+      OutParams<T, To>,
       Context & StaticContext,
-      RM[To]['state']
+      T[To]['state']
     >
   ) => React.ReactNode
   children?:
     | ((
-        props: RouteChildrenProps<OutParams<RM, To>, RM[To]['state']>
+        props: RouteChildrenProps<OutParams<T, To>, T[To]['state']>
       ) => React.ReactNode)
     | React.ReactNode
 }
 
 const createTypedRouter = <
-  RM extends RouteMap = RouteMap,
+  T extends RouteTypes = RouteTypes,
   Context = StaticContext
 >(
-  routeMap: Routes<RM>
+  routes: Routes<T>
 ) => {
-  const normalizeTo = <To extends Extract<keyof RM, string>>(
+  const normalizeTo = <To extends Extract<keyof T, string>>(
     to: To,
-    params: RM[To]['params'],
-    state: RM[To]['state']
+    params: T[To]['params'],
+    state: T[To]['state']
   ) => {
     // super naive url parsing for the case when a user wants to
     // provide state to `to` props
-    const href = generatePath(routeMap[to], params as RouteParams)
+    const href = generatePath(routes[to], params as RouteParams)
     const [initialPathname, ...hash] = href.split('#')
     const [pathname, ...search] = initialPathname.split('?')
     return {
@@ -166,21 +166,21 @@ const createTypedRouter = <
     }
   }
 
-  const toProps = <To extends Extract<keyof RM, string>, Props>({
+  const toProps = <To extends Extract<keyof T, string>, Props>({
     to,
     params,
     state,
     innerRef,
     ...props
-  }: RedirectProps<RM, To> | LinkProps<RM, To> | NavLinkProps<RM, To>) => ({
+  }: RedirectProps<T, To> | LinkProps<T, To> | NavLinkProps<T, To>) => ({
     ...props,
     ref: innerRef,
     to:
       params === null
-        ? routeMap[to]
+        ? routes[to]
         : state
         ? normalizeTo(to, params, state)
-        : generatePath(routeMap[to], params as RouteParams),
+        : generatePath(routes[to], params as RouteParams),
   })
 
   const pathProps = (props: Record<string, any>, ref: any = void 0) => {
@@ -192,15 +192,15 @@ const createTypedRouter = <
         path === void 0
           ? path
           : Array.isArray(path)
-          ? path.map(k => routeMap[k])
-          : routeMap[path],
+          ? path.map(k => routes[k])
+          : routes[path],
     }
   }
 
-  const Route = <To extends Extract<keyof RM, string> = any>({
+  const Route = <To extends Extract<keyof T, string> = any>({
     innerRef,
     ...props
-  }: RouteProps<RM, To, Context>) =>
+  }: RouteProps<T, To, Context>) =>
     React.createElement(Route_, pathProps(props, innerRef))
 
   const Switch: React.FC<SwitchProps> = forwardRef(
@@ -215,7 +215,7 @@ const createTypedRouter = <
         if (computedMatch == null && React.isValidElement(child)) {
           element = child
           const path =
-            routeMap[child.props.path || child.props.from || child.props.to]
+            routes[child.props.path || child.props.from || child.props.to]
 
           computedMatch = path
             ? matchPath_(realLocation.pathname, {...child.props, path})
@@ -233,7 +233,7 @@ const createTypedRouter = <
     }
   )
 
-  function createAsyncRoute<P = RouteProps<RM, any, Context>>(
+  function createAsyncRoute<P = RouteProps<T, any, Context>>(
     component: AsyncComponentGetter<any>,
     options?: AsyncRouteOptions<any>
   ) {
@@ -251,41 +251,41 @@ const createTypedRouter = <
     Prompt,
     Switch,
     Route,
-    Link: <To extends Extract<keyof RM, string>>(props: LinkProps<RM, To>) =>
+    Link: <To extends Extract<keyof T, string>>(props: LinkProps<T, To>) =>
       React.createElement(Link_, toProps(props)),
-    NavLink: <To extends Extract<keyof RM, string>>(
-      props: NavLinkProps<RM, To>
+    NavLink: <To extends Extract<keyof T, string>>(
+      props: NavLinkProps<T, To>
     ) => React.createElement(NavLink_, toProps(props)),
-    Redirect: <To extends Extract<keyof RM, string>>(
-      props: RedirectProps<RM, To>
+    Redirect: <To extends Extract<keyof T, string>>(
+      props: RedirectProps<T, To>
     ): React.ReactElement<RedirectProps_> =>
       React.createElement(Redirect_, toProps(props)),
-    useHistory: <To extends Extract<keyof RM, string> = any>(): History<
-      RM[To]['state']
+    useHistory: <To extends Extract<keyof T, string> = any>(): History<
+      T[To]['state']
     > => useHistory_(),
-    useLocation: <To extends Extract<keyof RM, string> = any>(): Location<
-      RM[To]['state']
+    useLocation: <To extends Extract<keyof T, string> = any>(): Location<
+      T[To]['state']
     > => useLocation_(),
-    useParams: <To extends Extract<keyof RM, string> = any>(): OutParams<
-      RM,
+    useParams: <To extends Extract<keyof T, string> = any>(): OutParams<
+      T,
       To
     > => useParams_(),
-    useRouteMatch: <To extends Extract<keyof RM, string>>(
-      to?: To | To[] | RouteProps<RM, To, Context>
-    ): match<OutParams<RM, To>> | null =>
+    useRouteMatch: <To extends Extract<keyof T, string>>(
+      to?: To | To[] | RouteProps<T, To, Context>
+    ): match<OutParams<T, To>> | null =>
       to
         ? useRouteMatch_(
             Array.isArray(to)
-              ? to.map(k => routeMap[k])
+              ? to.map(k => routes[k])
               : typeof to === 'object'
               ? pathProps(to)
-              : routeMap[to]
+              : routes[to]
           )
         : useRouteMatch_(),
-    matchPath: <To extends Extract<keyof RM, string>>(
+    matchPath: <To extends Extract<keyof T, string>>(
       pathname: string,
-      props: RouteProps<RM, To, Context>,
-      parent?: match<OutParams<RM, To>> | null
+      props: RouteProps<T, To, Context>,
+      parent?: match<OutParams<T, To>> | null
     ) => matchPath_(pathname, pathProps(props), parent),
     generatePath,
     withRouter,
