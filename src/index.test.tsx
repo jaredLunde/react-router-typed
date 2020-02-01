@@ -34,15 +34,24 @@ describe('createTypedRouter()', () => {
 
 describe('<Route>', () => {
   it('should create', () => {
-    const {StaticRouter, Route} = createTypedRouter<{
-      foo: {path: '/foo'; params: null}
-    }>({
+    const {StaticRouter, Route} = createTypedRouter<
+      {
+        foo: {path: '/foo'; params: null}
+      },
+      {
+        chip: 'mukwonago'
+      }
+    >({
       foo: '/foo',
     })
 
     let result = render(<Route path="foo" children={<div />} />, {
       wrapper: ({children}) => (
-        <StaticRouter location="/foo" children={children} />
+        <StaticRouter
+          location="/foo"
+          context={{chip: 'mukwonago'}}
+          children={children}
+        />
       ),
     })
 
@@ -80,12 +89,18 @@ describe('<Redirect>', () => {
 
 describe('<Link>', () => {
   const {StaticRouter, Link} = createTypedRouter<{
-    foo: {path: '/foo'; params: null}
+    foo: {
+      path: '/foo'
+      params: null
+      state: {
+        newSignup: boolean
+      }
+    }
     bar: {
       path: '/bar/:baz'
       params: {
-        baz: 'boz'
-      } | null
+        baz?: 'boz'
+      }
     }
   }>({
     foo: '/foo',
@@ -97,7 +112,9 @@ describe('<Link>', () => {
   )
 
   it('should render proper path', () => {
-    const result = render(<Link to="foo" />, {wrapper})
+    const result = render(<Link to="foo" state={{newSignup: true}} />, {
+      wrapper,
+    })
     expect(result.asFragment()).toMatchSnapshot('<div/>')
   })
 
