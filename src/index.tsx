@@ -200,7 +200,7 @@ const createTypedRouter = <
   const Route = <To extends Extract<keyof T, string> = any>({
     innerRef,
     ...props
-  }: RouteProps<T, To, Context>) =>
+  }: RouteProps<T, To, Context>): React.ReactElement<RouteProps_> =>
     React.createElement(Route_, pathProps(props, innerRef))
 
   const Switch: React.FC<SwitchProps> = forwardRef(
