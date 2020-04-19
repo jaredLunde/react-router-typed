@@ -1,325 +1,163 @@
 /* jest */
 import React from 'react'
-import {renderHook} from '@testing-library/react-hooks'
-import {render, act} from '@testing-library/react'
-import * as ReactRouterDom from 'react-router-dom'
-import createTypedRouter from './index'
-
-type FooRouteMap = {
-  foo: {
-    path: '/foo/:bar'
-    params: {
-      bar: 'baz' | 'buzz'
-    }
-  }
-  bar: {
-    path: '/bar'
-    params: null
-  }
-  baz: {
-    path: '/foo/:bar?'
-    params: null | {
-      bar: 'baz' | 'buzz'
-    }
-  }
-}
-
-describe('createTypedRouter()', () => {
-  it('should have the same exports as react-router-dom', () => {
-    expect([...Object.keys(createTypedRouter({})), 'default'].sort()).toEqual(
-      [...Object.keys(ReactRouterDom), 'createAsyncRoute'].sort()
-    )
-  })
-})
+import {renderHook, act} from '@testing-library/react-hooks'
+import {render} from '@testing-library/react'
+import {createRouter} from './index'
 
 describe('<Route>', () => {
-  it('should create', () => {
-    const {StaticRouter, Route} = createTypedRouter<
-      {
-        foo: {path: '/foo'; params: null}
-      },
-      {
-        chip: 'mukwonago'
+  it('should work', () => {
+    const Router = createRouter<{
+      foo: {
+        path: '/foo/:foo'
+        params: {
+          foo: string
+        }
+        state: null
       }
-    >({
-      foo: '/foo',
+      bar: {
+        path: '/bar'
+        params: null
+        state: null
+      }
+    }>({
+      foo: '/foo/:foo',
+      bar: '/bar',
     })
 
-    let result = render(<Route path="foo" children={<div />} />, {
-      wrapper: ({children}) => (
-        <StaticRouter
-          location="/foo"
-          context={{chip: 'mukwonago'}}
-          children={children}
-        />
-      ),
-    })
+    const route = <Router.Route to="foo" element={<div />} />
+    const {result} = renderHook(
+      () =>
+        Router.useRoutes([
+          {to: 'bar', element: <div />},
+          {to: 'foo', element: <div />},
+        ]),
+      {
+        wrapper: (props) => (
+          <Router.MemoryRouter
+            initialEntries={[
+              {pathname: '/foo/bar', search: '', hash: '', key: ''},
+            ]}
+            {...props}
+          />
+        ),
+      }
+    )
 
-    expect(result.asFragment()).toMatchSnapshot('<div/>')
-
-    result = render(<Route path="foo" children={<div />} />, {
-      wrapper: ({children}) => (
-        <StaticRouter location="/" children={children} />
-      ),
-    })
-
-    expect(result.asFragment()).toMatchSnapshot('empty')
+    expect('fo').toBe('fo')
   })
 })
 
-describe('<Redirect>', () => {
-  const {StaticRouter, Redirect} = createTypedRouter<{
-    foo: {path: '/foo'; params: null}
-  }>({
-    foo: '/foo',
-  })
-
-  it('should create', () => {
-    const context: Record<any, any> = {}
-
-    render(<Redirect to="foo" />, {
-      wrapper: ({children}) => (
-        <StaticRouter context={context} location="/" children={children} />
-      ),
+describe('useNavigate()', () => {
+  it('should work', () => {
+    const Router = createRouter<{
+      foo: {
+        path: '/foo/:foo'
+        params: {
+          foo: string
+        }
+        state: null
+      }
+      bar: {
+        path: '/bar'
+        params: null
+        state: null
+      }
+    }>({
+      foo: '/foo/:foo',
+      bar: '/bar',
     })
 
-    expect(context.url).toBe('/foo')
+    const {result} = renderHook(() => Router.useNavigate(), {
+      wrapper: (props) => <Router.MemoryRouter {...props} />,
+    })
+
+    act(() => result.current('foo', {params: {foo: 'bar'}}))
+    console.log(result.current)
+    expect('fo').toBe('fo')
   })
 })
 
-describe('<Link>', () => {
-  const {StaticRouter, Link} = createTypedRouter<{
+describe('useMatch()', () => {
+  const Router = createRouter<{
     foo: {
-      path: '/foo'
-      params: null
-      state: {
-        newSignup: boolean
+      path: '/foo/:foo'
+      params: {
+        foo: string
       }
+      state: null
     }
     bar: {
-      path: '/bar/:baz'
-      params: {
-        baz?: 'boz'
-      }
+      path: '/bar'
+      params: null
+      state: null
     }
   }>({
-    foo: '/foo',
-    bar: '/bar/:baz',
-  })
-
-  const wrapper = ({children}) => (
-    <StaticRouter location="/foo" children={children} />
-  )
-
-  it('should render proper path', () => {
-    const result = render(<Link to="foo" state={{newSignup: true}} />, {
-      wrapper,
-    })
-    expect(result.asFragment()).toMatchSnapshot('<div/>')
-  })
-
-  it('should render proper path w/ params', () => {
-    const result = render(<Link to="bar" params={{baz: 'boz'}} />, {wrapper})
-    expect(result.asFragment()).toMatchSnapshot('<div/>')
-  })
-})
-
-describe('<NavLink>', () => {
-  const {StaticRouter, NavLink} = createTypedRouter<FooRouteMap>({
-    foo: '/foo/:bar',
+    foo: '/foo/:foo',
     bar: '/bar',
-    baz: '/foo/:bar?',
   })
 
-  const wrapper = ({children}) => (
-    <StaticRouter location="/foo" children={children} />
-  )
+  it('should match', () => {
+    const {result} = renderHook(() => Router.useMatch('foo', {foo: 'bar'}), {
+      wrapper: (props) => (
+        <Router.MemoryRouter
+          initialEntries={[
+            {pathname: '/foo/bar', search: '', hash: '', key: ''},
+          ]}
+          {...props}
+        />
+      ),
+    })
 
-  it('should render proper path', () => {
-    const result = render(<NavLink to="bar" />, {wrapper})
-    expect(result.asFragment()).toMatchSnapshot('<div/>')
+    expect(result.current).toBe(true)
   })
 
-  it('should render proper path w/ params', () => {
-    const result = render(<NavLink to="foo" params={{bar: 'baz'}} />, {wrapper})
-    expect(result.asFragment()).toMatchSnapshot('<div/>')
+  it('should not match', () => {
+    const {result} = renderHook(() => Router.useMatch('foo', {foo: 'baz'}), {
+      wrapper: (props) => (
+        <Router.MemoryRouter
+          initialEntries={[
+            {pathname: '/foo/bar', search: '', hash: '', key: ''},
+          ]}
+          {...props}
+        />
+      ),
+    })
+
+    expect(result.current).toBe(false)
   })
 })
 
-describe('matchPath()', () => {
-  const {matchPath} = createTypedRouter<{
-    profile: {
-      path: '/users/:id'
+describe('useHref()', () => {
+  const Router = createRouter<{
+    foo: {
+      path: '/foo/:foo'
       params: {
-        id: number
+        foo: string
       }
+      state: null
+    }
+    bar: {
+      path: '/bar'
+      params: null
+      state: null
     }
   }>({
-    profile: '/users/:id',
+    foo: '/foo/:foo',
+    bar: '/bar',
   })
 
-  it('should work', () => {
-    const match = matchPath('/users/123', {
-      path: 'profile',
-      exact: true,
-      strict: false,
-    })
-
-    expect(match).toEqual({
-      isExact: true,
-      path: '/users/:id',
-      url: '/users/123',
-      params: {id: '123'},
-    })
-  })
-})
-
-describe('useParams()', () => {
-  it('should return the right params', () => {
-    const {StaticRouter, Route, useParams} = createTypedRouter<{
-      foo: {path: '/foo/:bar'; params: {bar: string}}
-    }>({
-      foo: '/foo/:bar',
-    })
-
-    const {result} = renderHook(() => useParams<'foo'>(), {
-      wrapper: ({children}) => (
-        <StaticRouter
-          location="/foo/bar"
-          children={<Route path="foo" children={children} />}
+  it('should create href from to and params', () => {
+    const {result} = renderHook(() => Router.useHref('foo', {foo: 'bar'}), {
+      wrapper: (props) => (
+        <Router.MemoryRouter
+          initialEntries={[
+            {pathname: '/foo/bar', search: '', hash: '', key: ''},
+          ]}
+          {...props}
         />
       ),
     })
 
-    expect(result.current.bar).toBe('bar')
-  })
-})
-
-describe('useRouteMatch()', () => {
-  it('should return the right params for a string', () => {
-    const {StaticRouter, Route, useRouteMatch} = createTypedRouter<{
-      foo: {path: '/foo/:bar'; params: {bar: string}}
-    }>({
-      foo: '/foo/:bar',
-    })
-
-    const {result} = renderHook(() => useRouteMatch('foo'), {
-      wrapper: ({children}) => (
-        <StaticRouter
-          location="/foo/bar"
-          children={<Route path="foo" children={children} />}
-        />
-      ),
-    })
-
-    expect(result.current.params.bar).toBe('bar')
-  })
-
-  it('should return the right params for an array', () => {
-    const {StaticRouter, Route, useRouteMatch} = createTypedRouter<{
-      foo: {path: '/foo/:bar'; params: {bar: string}}
-      bar: {path: '/bar/:bar'; params: {bar: string}}
-    }>({
-      foo: '/foo/:bar',
-      bar: '/bar/:bar',
-    })
-
-    const {result} = renderHook(() => useRouteMatch(['foo', 'bar']), {
-      wrapper: ({children}) => (
-        <StaticRouter
-          location="/foo/bar"
-          children={<Route path="foo" children={children} />}
-        />
-      ),
-    })
-
-    expect(result.current.params.bar).toBe('bar')
-  })
-
-  it('should return the right params for an object', () => {
-    const {StaticRouter, Route, useRouteMatch} = createTypedRouter<{
-      foo: {path: '/foo/:bar'; params: {bar: string}}
-      bar: {path: '/bar/:bar'; params: {bar: string}}
-    }>({
-      foo: '/foo/:bar',
-      bar: '/bar/:bar',
-    })
-
-    const {result} = renderHook(() => useRouteMatch({to: ['foo', 'bar']}), {
-      wrapper: ({children}) => (
-        <StaticRouter
-          location="/foo/bar"
-          children={<Route path="foo" children={children} />}
-        />
-      ),
-    })
-
-    expect(result.current.params.bar).toBe('bar')
-  })
-})
-
-describe('createAsyncRoute()', () => {
-  const {StaticRouter, Switch, createAsyncRoute} = createTypedRouter<{
-    foo: {path: '/foo'; params: null}
-    bar: {path: '/bar'; params: null}
-    home: {path: '/'; params: null}
-  }>({foo: '/foo', bar: '/bar', home: '/'})
-  const ComponentModule = {
-    default: ({children}) => <div children={children} />,
-  }
-
-  it('should load regular components w/o loading state', () => {
-    const HomeRoute = createAsyncRoute(() => ComponentModule, {
-      loading: () => 'Loading...',
-    })
-
-    let result
-    act(() => {
-      result = render(<HomeRoute to="foo" />, {
-        wrapper: props => <StaticRouter location="/foo" {...props} />,
-      })
-    })
-
-    expect(result.asFragment()).toMatchSnapshot()
-  })
-
-  it('should load regular components w/o loading state or options', () => {
-    const HomeRoute = createAsyncRoute(() => ComponentModule)
-
-    let result
-    act(() => {
-      result = render(<HomeRoute path="foo" />, {
-        wrapper: props => <StaticRouter location="/foo" {...props} />,
-      })
-    })
-
-    expect(result.asFragment()).toMatchSnapshot()
-  })
-
-  it('should display the correct route', () => {
-    const HomeRoute = createAsyncRoute(() => ComponentModule)
-
-    let result
-    act(() => {
-      result = render(
-        <>
-          <HomeRoute path="foo" children="foo" />
-          <HomeRoute path="bar" children="bar" />
-          <HomeRoute path={['foo', 'bar']} children=" - foobar" />
-          <HomeRoute path="home" exact children="home" />
-        </>,
-        {
-          wrapper: props => (
-            <StaticRouter
-              location="/foo"
-              {...props}
-              children={<Switch>{props.children}</Switch>}
-            />
-          ),
-        }
-      )
-    })
-
-    expect(result.asFragment()).toMatchSnapshot()
+    expect(result.current).toBe('/foo/bar')
   })
 })

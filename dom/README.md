@@ -1,7 +1,7 @@
 <hr>
 <div align="center">
   <h1 align="center">
-    react-router-typed
+    react-router-typed/dom
   </h1>
 </div>
 
@@ -29,13 +29,12 @@
 <pre align="center">npm i react-router-typed</pre>
 <hr>
 
-A TypeScript implementation of react-router v6 with strong types based entirely on
-work by [Michael Jackson and ReactTraining](https://github.com/reacttraining/react-router).
+A strongly typed router for React and the dom
 
 ## Quick Start
 
 ```jsx harmony
-import {createRouter} from 'react-router-typed'
+import {createRouter} from 'react-router-typed/dom'
 ```
 
 ## API
@@ -45,13 +44,6 @@ import {createRouter} from 'react-router-typed'
 | Prop | Type | Default | Required? | Description |
 | ---- | ---- | ------- | --------- | ----------- |
 |      |      |         |           |             |
-
-## Credits
-
-This library is a fork of react-router. It was written almost entirely by Michael Jackson.
-All I did was add strong types.
-
-[Check out react-router by Michael Jackson and ReactTraining](https://github.com/reacttraining/react-router)
 
 ## LICENSE
 

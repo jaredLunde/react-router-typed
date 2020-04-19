@@ -1,3 +1,5 @@
 node_modules
 dist
 coverage
+dom/server.js
+**/*.d.ts
