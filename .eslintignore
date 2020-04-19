@@ -3,3 +3,4 @@ dist
 /coverage
 /test
 *.config.js
+**/*.d.ts
