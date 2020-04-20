@@ -19,7 +19,7 @@
   ],
   "main": "dist/main/index.js",
   "module": "dist/module/index.js",
-  "source": "src/index.ts",
+  "source": "src/index.tsx",
   "types": "src/index.d.ts",
   "exports": {
     ".": {
