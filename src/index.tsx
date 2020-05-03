@@ -786,12 +786,12 @@ export interface RouteTypes {
 export type RouteType<T> =
   | {
       readonly to: keyof T | '*'
-      readonly element: React.ReactElement
+      readonly element: React.ReactElement | JSX.Element
     }
   | {
       readonly path: string
       readonly redirectTo: keyof T
-      readonly element: React.ReactElement
+      readonly element: React.ReactElement | JSX.Element
     }
 
 export type Params<P extends Record<string, string> = {}> = {
@@ -809,7 +809,7 @@ export interface LocationContextType<S extends State = State> {
 }
 
 export interface RouteContextType<T, P = Params> {
-  readonly outlet: React.ReactElement<{}> | null
+  readonly outlet: React.ReactElement | JSX.Element | null
   readonly params: P
   readonly pathname: string
   readonly route: RouteType<T> | null
@@ -848,9 +848,11 @@ export interface RouteProps<
 > {
   readonly to?: To | '*'
   readonly state?: T[To]['state']
-  readonly element?: React.ReactElement
-  readonly children?: React.ReactElement
-  readonly innerRef?: React.Ref<React.ReactElement<RouteProps<T, To>>>
+  readonly element?: React.ReactElement | JSX.Element
+  readonly children?: React.ReactElement | JSX.Element
+  readonly innerRef?: React.Ref<
+    JSX.Element | React.ReactElement<RouteProps<T, To>>
+  >
 }
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
