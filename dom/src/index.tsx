@@ -291,7 +291,7 @@ export type LocationWithOptionalProps<S extends State = State> = {
 
 export interface LinkProps<To extends RouteTo = RouteTo>
   extends React.HTMLAttributes<HTMLAnchorElement> {
-  as?: keyof JSX.IntrinsicElements | React.ComponentType<any>
+  as?: React.ElementType | keyof JSX.IntrinsicElements
   innerRef: InnerRef<HTMLAnchorElement>
   ref: never
   onClick?: (event: React.MouseEvent<HTMLAnchorElement>) => any
