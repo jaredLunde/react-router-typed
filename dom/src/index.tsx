@@ -98,7 +98,7 @@ export const createRouter = <T extends RouteTypes>(routes: Routes<T>) => {
       block() {},
     }
 
-    return <base.Router children={children} history={mockHistory} />
+    return <base.Router children={children} history={mockHistory as any} />
   }
 
   /**
@@ -252,7 +252,8 @@ export const createRouter = <T extends RouteTypes>(routes: Routes<T>) => {
     Prompt.displayName = 'Prompt'
   }
 
-  return Object.assign(base, {
+  return {
+    ...base,
     BrowserRouter,
     StaticRouter,
     Link,
@@ -260,7 +261,7 @@ export const createRouter = <T extends RouteTypes>(routes: Routes<T>) => {
     Prompt,
     usePrompt,
     useSearchParams,
-  })
+  }
 }
 
 ///////////////////////////////////////////////////////////////////////////////

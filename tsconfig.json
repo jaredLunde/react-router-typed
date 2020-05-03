@@ -27,7 +27,7 @@
     "downlevelIteration": true,
     "baseUrl": ".",
     "paths": {
-      "react-router-typed": ["."],
+      "react-router-typed": ["./src"],
       "react-router-typed/dom": ["./dom"]
     }
   }
