@@ -2,9 +2,14 @@
   "include": ["src", "dom/src"],
   "exclude": [
     "src/**/*.test.ts",
+    "src/**/*.test.ts",
+    "src/**/test.ts",
     "src/**/*.test.tsx",
+    "src/**/test.tsx",
     "dom/src/**/*.test.ts",
-    "dom/src/**/*.test.tsx"
+    "dom/src/**/test.ts",
+    "dom/src/**/*.test.tsx",
+    "dom/src/**/test.tsx"
   ],
   "compilerOptions": {
     "target": "es5",
