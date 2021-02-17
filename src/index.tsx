@@ -34,7 +34,6 @@ import type {
   SwitchProps,
 } from 'react-router'
 import type {History, Location, LocationState} from 'history'
-// eslint-disable-next-line import/no-extraneous-dependencies
 import pathToRegExp from 'path-to-regexp'
 
 export function createRouter<

@@ -145,6 +145,7 @@
   },
   "dependencies": {
     "@types/react-router-dom": "^5.1.7",
+    "path-to-regexp": "^1.7.0",
     "react-router": "^5.2.0",
     "react-router-dom": "^5.2.0"
   },
