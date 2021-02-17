@@ -1,34 +1,13 @@
 {
-  "include": ["src", "dom/src"],
-  "exclude": [
-    "src/**/*.test.ts",
-    "src/**/*.test.ts",
-    "src/**/test.ts",
-    "src/**/*.test.tsx",
-    "src/**/test.tsx",
-    "dom/src/**/*.test.ts",
-    "dom/src/**/test.ts",
-    "dom/src/**/*.test.tsx",
-    "dom/src/**/test.tsx"
-  ],
+  "include": ["src"],
+  "exclude": ["src/**/*.test.ts", "src/**/*.test.tsx"],
   "compilerOptions": {
     "target": "es5",
     "lib": ["esnext", "dom", "dom.iterable"],
     "jsx": "react",
     "moduleResolution": "node",
-    "strictNullChecks": true,
     "esModuleInterop": true,
-    "forceConsistentCasingInFileNames": true,
     "allowSyntheticDefaultImports": true,
-    "noImplicitReturns": false,
-    "noUnusedLocals": true,
-    "noFallthroughCasesInSwitch": true,
-    "noEmitOnError": true,
-    "downlevelIteration": true,
-    "baseUrl": ".",
-    "paths": {
-      "react-router-typed": ["./src"],
-      "react-router-typed/dom": ["./dom"]
-    }
+    "strict": true
   }
 }

@@ -1,11 +1,11 @@
 {
   "name": "react-router-typed",
-  "version": "2.0.0-beta.8",
+  "version": "1.0.0",
   "homepage": "https://github.com/jaredLunde/react-router-typed#readme",
   "repository": "github:jaredLunde/react-router-typed",
   "bugs": "https://github.com/jaredLunde/react-router-typed/issues",
   "license": "MIT",
-  "description": "A TypeScript implementation of react-router v6 with strong types",
+  "description": "react-router-dom v5 with strong types",
   "keywords": [
     "react",
     "routing",
@@ -19,95 +19,137 @@
   ],
   "main": "dist/main/index.js",
   "module": "dist/module/index.js",
+  "unpkg": "dist/umd/react-router-typed.js",
   "source": "src/index.tsx",
-  "types": "src/index.d.ts",
+  "types": "types/index.d.ts",
   "exports": {
     ".": {
       "browser": "./dist/module/index.js",
-      "import": "./dist/module/index.js",
-      "require": "./dist/main/index.js"
-    },
-    "./dom": {
-      "browser": "./dom/dist/module/index.js",
-      "import": "./dom/dist/module/index.js",
-      "require": "./dom/dist/main/index.js"
+      "import": "./dist/esm/index.mjs",
+      "require": "./dist/main/index.js",
+      "umd": "./dist/umd/react-router-typed.js",
+      "source": "./src/index.tsx",
+      "types": "./types/index.d.ts",
+      "default": "./dist/main/index.js"
     },
     "./package.json": "./package.json",
     "./": "./"
   },
   "files": [
-    "/src",
     "/dist",
-    "/dom/src",
-    "/dom/dist",
-    "/dom/package.json"
+    "/src",
+    "/types"
   ],
   "sideEffects": false,
   "scripts": {
-    "build": "npm run build-main && npm run build-module && npm run build-types",
-    "build-main": "npm run compile -- -d dist/main --env-name main && npm run compile-dom -- -d dom/dist/main --env-name main",
-    "build-module": "npm run compile -- -d dist/module --env-name module && npm run compile-dom -- -d dom/dist/module --env-name module",
-    "build-types": "find src -name '*.d.ts' -exec rm {} \\; && find dom/src -name '*.d.ts' -exec rm {} \\; && tsc -p tsconfig.json -d --emitDeclarationOnly",
-    "check-types": "tsc --noEmit -p tsconfig.json",
-    "compile": "babel src -x .ts,.tsx --ignore \"**/*.d.ts\",\"**/*.test.ts\",\"**/test.ts\",\"**/*.test.tsx\",\"**/test.tsx\" --delete-dir-on-start",
-    "compile-dom": "babel dom/src -x .ts,.tsx --ignore \"**/*.d.ts\",\"**/*.test.ts\",\"**/test.ts\",\"**/*.test.tsx\",\"**/test.tsx\" --delete-dir-on-start",
-    "format": "prettier --write \"**/*.{ts,tsx,js,jsx,md,yml,json,eslintrc,prettierrc}\"",
+    "build": "lundle build",
+    "check-types": "lundle check-types",
+    "dev": "lundle build -f module,cjs -w",
+    "format": "prettier --write \"{,!(node_modules|dist|coverage)/**/}*.{ts,tsx,js,jsx,md,yml,json}\"",
     "lint": "eslint . --ext .ts,.tsx",
-    "prepublishOnly": "npm run lint && npm run test && npm run build && npm run format",
+    "prepublishOnly": "cli-confirm \"Did you run 'yarn release' first? (y/N)\"",
+    "prerelease": "npm run validate && npm run build",
+    "release": "git add . && standard-version -a",
     "test": "jest",
-    "validate": "npm run check-types && npm run lint && npm run test -- --coverage"
+    "validate": "lundle check-types && npm run lint && jest --coverage"
   },
   "husky": {
     "hooks": {
-      "pre-commit": "npm run build-types && git add types && lint-staged"
+      "pre-commit": "lundle check-types && lint-staged",
+      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS"
     }
   },
   "lint-staged": {
     "**/*.{ts,tsx,js,jsx}": [
-      "eslint",
+      "eslint --fix",
       "prettier --write"
     ],
-    "**/*.{md,yml,json,eslintrc,prettierrc}": [
+    "**/*.{md,yml,json}": [
       "prettier --write"
     ]
   },
+  "commitlint": {
+    "extends": [
+      "@commitlint/config-conventional"
+    ]
+  },
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
+  },
+  "eslintConfig": {
+    "extends": [
+      "lunde"
+    ]
+  },
+  "eslintIgnore": [
+    "node_modules",
+    "coverage",
+    "dist",
+    "/types",
+    "test",
+    "*.config.js"
+  ],
+  "jest": {
+    "moduleDirectories": [
+      "node_modules",
+      "src",
+      "test"
+    ],
+    "testMatch": [
+      "<rootDir>/src/**/?(*.)test.{ts,tsx}"
+    ],
+    "collectCoverageFrom": [
+      "**/src/**/*.{ts,tsx}"
+    ],
+    "setupFilesAfterEnv": [
+      "./test/setup.js"
+    ],
+    "snapshotResolver": "./test/resolve-snapshot.js",
+    "globals": {
+      "__DEV__": true
+    }
+  },
+  "prettier": {
+    "semi": false,
+    "singleQuote": true,
+    "jsxSingleQuote": true,
+    "bracketSpacing": false
+  },
   "devDependencies": {
-    "@babel/preset-react": "latest",
-    "@lunde/babel-preset-es": "latest",
+    "@commitlint/cli": "latest",
+    "@commitlint/config-conventional": "latest",
     "@testing-library/jest-dom": "latest",
-    "@testing-library/react": "^10.0.4",
+    "@testing-library/react": "latest",
     "@testing-library/react-hooks": "latest",
+    "@testing-library/user-event": "latest",
     "@types/jest": "latest",
-    "@types/node": "^13.11.1",
     "@types/react": "latest",
-    "@types/react-dom": "^16.9.7",
-    "@typescript-eslint/eslint-plugin": "^2.30.0",
-    "@typescript-eslint/parser": "^2.30.0",
-    "babel-plugin-optimize-react": "latest",
-    "babel-plugin-typescript-to-proptypes": "latest",
+    "@types/react-dom": "latest",
+    "babel-jest": "latest",
+    "cli-confirm": "latest",
+    "cz-conventional-changelog": "latest",
     "eslint": "latest",
-    "eslint-import-resolver-jest": "latest",
-    "eslint-plugin-jest": "latest",
-    "eslint-plugin-react": "latest",
-    "eslint-plugin-react-hooks": "^4.0.0",
+    "eslint-config-lunde": "latest",
     "husky": "latest",
-    "jest": "^25.5.4",
-    "lint-staged": "^10.2.2",
-    "prettier": "^2.0.5",
+    "jest": "latest",
+    "lint-staged": "latest",
+    "lundle": "latest",
+    "prettier": "latest",
     "react": "latest",
     "react-dom": "latest",
     "react-test-renderer": "latest",
-    "ts-jest": "^25.4.0",
+    "standard-version": "latest",
     "typescript": "latest"
   },
   "dependencies": {
-    "create-async-component": "^1.0.4",
-    "create-async-route": "^1.1.3",
-    "history": "^5.0.0-beta.8"
+    "@types/react-router-dom": "^5.1.7",
+    "react-router": "^5.2.0",
+    "react-router-dom": "^5.2.0"
   },
   "peerDependencies": {
-    "prop-types": ">=15.6",
-    "react": ">=16.8",
-    "react-dom": ">=16.8"
+    "history": ">=5.0.0",
+    "react": ">=16.8"
   }
 }

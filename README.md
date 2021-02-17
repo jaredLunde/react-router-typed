@@ -1,22 +1,25 @@
-<hr>
-<div align="center">
-  <h1 align="center">
-    react-router-typed
-  </h1>
-</div>
+<hr/>
 
-<p align="center">
+# react-router-typed
+
+> react-router-dom v5 with strong types
+
+```sh
+npm i react-router-typed
+```
+
+<p>
   <a href="https://bundlephobia.com/result?p=react-router-typed">
     <img alt="Bundlephobia" src="https://img.shields.io/bundlephobia/minzip/react-router-typed?style=for-the-badge&labelColor=24292e">
   </a>
   <a aria-label="Types" href="https://www.npmjs.com/package/react-router-typed">
     <img alt="Types" src="https://img.shields.io/npm/types/react-router-typed?style=for-the-badge&labelColor=24292e">
   </a>
-  <a aria-label="Code coverage report" href="https://codecov.io/gh/jaredLunde/react-router-typed">
-    <img alt="Code coverage" src="https://img.shields.io/codecov/c/gh/jaredLunde/react-router-typed?style=for-the-badge&labelColor=24292e">
+  <a aria-label="Code coverage report" href="https://codecov.io/gh/jaredjbarnes/react-router-typed">
+    <img alt="Code coverage" src="https://img.shields.io/codecov/c/gh/jaredjbarnes/react-router-typed?style=for-the-badge&labelColor=24292e">
   </a>
-  <a aria-label="Build status" href="https://travis-ci.com/jaredLunde/react-router-typed">
-    <img alt="Build status" src="https://img.shields.io/travis/com/jaredLunde/react-router-typed?style=for-the-badge&labelColor=24292e">
+  <a aria-label="Build status" href="https://travis-ci.com/jaredjbarnes/react-router-typed">
+    <img alt="Build status" src="https://img.shields.io/travis/com/jaredjbarnes/react-router-typed?style=for-the-badge&labelColor=24292e">
   </a>
   <a aria-label="NPM version" href="https://www.npmjs.com/package/react-router-typed">
     <img alt="NPM Version" src="https://img.shields.io/npm/v/react-router-typed?style=for-the-badge&labelColor=24292e">
@@ -26,10 +29,9 @@
   </a>
 </p>
 
-<pre align="center">npm i react-router-typed</pre>
-<hr>
+---
 
-A TypeScript implementation of react-router v6 with strong types based entirely on
+A TypeScript implementation of react-router v5 with strong types based entirely on
 work by [Michael Jackson and ReactTraining](https://github.com/reacttraining/react-router).
 
 ## Quick Start
