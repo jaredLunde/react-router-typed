@@ -101,33 +101,39 @@ export function createRouter<
     }
   }
 
+  function parameterizePath(path: string, params?: Record<string, any>) {
+    if (!params || !path) return path
+    const tokens = pathToRegExp.parse(path as string)
+    const nextTokens: typeof tokens = []
+
+    for (const token of tokens) {
+      if (typeof token === 'string') {
+        nextTokens.push(token)
+      } else if (params.hasOwnProperty(token.name) && !token.asterisk) {
+        nextTokens.push(token)
+      } else if (token.asterisk) {
+        nextTokens.push(`${token.prefix}*`)
+      } else {
+        nextTokens.push(
+          `${token.prefix}:${token.name}(${token.pattern})${
+            token.optional ? '?' : ''
+          }${token.repeat ? '+' : ''}`
+        )
+      }
+    }
+
+    return pathToRegExp.tokensToFunction(nextTokens)(params as any)
+  }
+
   function Route<To extends Extract<keyof T, string>>({
     innerRef,
     params,
     ...props
   }: RouteProps<T, To, Context>): React.ReactElement<RouteProps_> {
     const nextProps = pathProps(props, innerRef) as RouteProps_
-    if (params && typeof nextProps.path === 'string') {
-      const tokens = pathToRegExp.parse(nextProps.path as string)
-      const nextTokens: typeof tokens = []
 
-      for (const token of tokens) {
-        if (typeof token === 'string') {
-          nextTokens.push(token)
-        } else if (params.hasOwnProperty(token.name) && !token.asterisk) {
-          nextTokens.push(token)
-        } else if (token.asterisk) {
-          nextTokens.push(`${token.prefix}*`)
-        } else {
-          nextTokens.push(
-            `${token.prefix}:${token.name}(${token.pattern})${
-              token.optional ? '?' : ''
-            }${token.repeat ? '+' : ''}`
-          )
-        }
-      }
-
-      nextProps.path = pathToRegExp.tokensToFunction(nextTokens)(params as any)
+    if (typeof nextProps.path === 'string') {
+      nextProps.path = parameterizePath(nextProps.path, params as any)
     }
 
     return React.createElement(Route_, nextProps)
@@ -143,8 +149,10 @@ export function createRouter<
     React.Children.forEach(children, (child) => {
       if (computedMatch == null && React.isValidElement(child)) {
         element = child
-        const path =
-          routes[child.props.path || child.props.from || child.props.to]
+        const path = parameterizePath(
+          routes[child.props.path || child.props.from || child.props.to],
+          child.props.params
+        )
 
         computedMatch = path
           ? matchPath_(realLocation.pathname, {...child.props, path})
